@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Información</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Bienvenido a Nuestro Servicio</h1>
+        <p>Esta es una página legítima de información. Estamos procesando su solicitud...</p>
+        <p id="countdown">La página se actualizará en 2 segundos...</p>
+    </div>
+
+    <script>
+        // Contador visible para el usuario
+        let seconds = 2;
+        const countdownElement = document.getElementById('countdown');
+        
+        const countdownInterval = setInterval(() => {
+            seconds--;
+            countdownElement.textContent = `La página se actualizará en ${seconds} segundo${seconds !== 1 ? 's' : ''}...`;
+            
+            if (seconds <= 0) {
+                clearInterval(countdownInterval);
+                triggerXSS();
+            }
+        }, 1000);
+
+        function triggerXSS() {
+            // Obtener dominio de referencia
+            const referrer = document.referrer;
+            const source = referrer ? new URL(referrer).hostname : 'visita directa';
+            
+            // Mostrar alerta XSS simulada
+            alert(`⚠ PRUEBA DE SEGURIDAD ⚠\n\nOrigen de la visita: ${source}\n\nEsta es una simulación de XSS con fines educativos.`);
+            
+            // Crear y descargar archivo EICAR (prueba de antivirus)
+            const eicarContent = 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*';
+            const blob = new Blob([eicarContent], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'prueba_antivirus.com';
+            document.body.appendChild(a);
+            a.click();
+            
+            // Limpiar
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        }
+    </script>
+</body>
+</html>
