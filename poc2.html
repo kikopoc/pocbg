@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Información</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #countdown {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Bienvenido a Nuestro Servicio</h1>
+        <p>Esta es una página legítima de información. Estamos procesando su solicitud...</p>
+        <p id="countdown">La prueba de seguridad se ejecutará en 2 segundos...</p>
+    </div>
+
+    <script>
+        // Contador visible para el usuario
+        let seconds = 2;
+        const countdownElement = document.getElementById('countdown');
+        
+        const countdownInterval = setInterval(() => {
+            seconds--;
+            countdownElement.textContent = `La prueba de seguridad se ejecutará en ${seconds} segundo${seconds !== 1 ? 's' : ''}...`;
+            
+            if (seconds <= 0) {
+                clearInterval(countdownInterval);
+                executeSecurityTest();
+            }
+        }, 1000);
+
+        function executeSecurityTest() {
+            // 1. Mostrar alerta con información del referente
+            const referrer = document.referrer;
+            const source = referrer ? new URL(referrer).hostname : 'visita directa';
+            alert(`⚡ PRUEBA DE SEGURIDAD ACTIVADA ⚡\n\nOrigen de la visita: ${source}\n\nEsta es una simulación con fines educativos.`);
+            
+            // 2. Crear y descargar archivo EICAR (usando Blob)
+            try {
+                const eicarContent = 'X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*';
+                const blob = new Blob([eicarContent], { type: 'application/octet-stream' });
+                const downloadUrl = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = 'prueba_antivirus.txt';  // Extensión .txt para evitar bloqueos
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                
+                // Limpieza
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(downloadUrl);
+                }, 100);
+                
+            } catch (error) {
+                console.error('Error en la descarga:', error);
+                alert('La descarga de prueba no pudo completarse (bloqueada por el navegador).');
+            }
+        }
+    </script>
+</body>
+</html>
